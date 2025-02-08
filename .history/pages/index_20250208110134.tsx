@@ -1,22 +1,20 @@
 import Head from "next/head";
+import { GetStaticPropsResult } from "next";
 import { DrupalNode } from "next-drupal";
 
-import { Layout, LayoutProps } from "components/layout";
+import { drupal } from "lib/drupal";
+import { Layout } from "components/layout";
+import { MenuMain } from "./menu-main";
 import HeroSection from "components/HeroSection";
 import Image from "next/image";
-import { GetStaticPropsContext, GetStaticPropsResult } from "next";
-import { drupal } from "lib/drupal";
 
-interface IndexPageProps extends LayoutProps {
-  // node: DrupalNode;
+interface IndexPageProps {
+  nodes: DrupalNode[];
 }
 
-export default function IndexPage({
-  // node,
-  menus,
-}: IndexPageProps) {
+export default function IndexPage({ nodes }: IndexPageProps) {
   return (
-    <Layout menus={menus}>
+    <Layout>
       <Head>
         <title>Next.js for Drupal</title>
         <meta
@@ -24,6 +22,7 @@ export default function IndexPage({
           content="A Next.js site powered by a Drupal backend."
         />
       </Head>
+
       <HeroSection />
       <section id="partners" className="flex w-full justify-center">
         <div className="mx-auto max-w-7xl sm:px-6 relative flex flex-col items-center px-8 pt-20 pb-16 text-gray-700 md:pt-24 md:pb-20">
@@ -105,30 +104,24 @@ export default function IndexPage({
 }
 
 export async function getStaticProps(
-  context: GetStaticPropsContext
+  context
 ): Promise<GetStaticPropsResult<IndexPageProps>> {
-  try {
-    const { tree: menus } = await drupal.getMenu("primary-menu", {
-      locale: context.locale,
-      defaultLocale: context.defaultLocale,
-    });
+  const nodes = await drupal.getResourceCollectionFromContext<DrupalNode[]>(
+    "node--article",
+    context,
+    {
+      params: {
+        "filter[status]": 1,
+        "fields[node--article]": "title,path,field_image,uid,created",
+        include: "field_image,uid",
+        sort: "-created",
+      },
+    }
+  );
 
-    return {
-      props: {
-        menus: {
-          main: menus,
-          footer: [],
-        },
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        menus: {
-          main: [],
-          footer: [],
-        },
-      },
-    };
-  }
+  return {
+    props: {
+      nodes,
+    },
+  };
 }

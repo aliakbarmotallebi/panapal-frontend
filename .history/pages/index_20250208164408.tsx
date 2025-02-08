@@ -15,6 +15,7 @@ export default function IndexPage({
   // node,
   menus,
 }: IndexPageProps) {
+  console.log("IndexPage");
   return (
     <Layout menus={menus}>
       <Head>

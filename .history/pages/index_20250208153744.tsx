@@ -5,18 +5,14 @@ import { Layout, LayoutProps } from "components/layout";
 import HeroSection from "components/HeroSection";
 import Image from "next/image";
 import { GetStaticPropsContext, GetStaticPropsResult } from "next";
-import { drupal } from "lib/drupal";
 
 interface IndexPageProps extends LayoutProps {
   // node: DrupalNode;
 }
 
-export default function IndexPage({
-  // node,
-  menus,
-}: IndexPageProps) {
+export default function IndexPage({ node, menus }: IndexPageProps) {
   return (
-    <Layout menus={menus}>
+    <Layout menus={}>
       <Head>
         <title>Next.js for Drupal</title>
         <meta
@@ -104,31 +100,16 @@ export default function IndexPage({
   );
 }
 
+
 export async function getStaticProps(
   context: GetStaticPropsContext
 ): Promise<GetStaticPropsResult<IndexPageProps>> {
-  try {
-    const { tree: menus } = await drupal.getMenu("primary-menu", {
-      locale: context.locale,
-      defaultLocale: context.defaultLocale,
-    });
+  
 
-    return {
-      props: {
-        menus: {
-          main: menus,
-          footer: [],
-        },
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        menus: {
-          main: [],
-          footer: [],
-        },
-      },
-    };
+  return {
+    props: {
+      // node : [],
+      menus: 
+    },
   }
 }

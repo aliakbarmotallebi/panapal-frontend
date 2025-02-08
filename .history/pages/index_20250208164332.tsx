@@ -15,6 +15,7 @@ export default function IndexPage({
   // node,
   menus,
 }: IndexPageProps) {
+  console.log("IndexPage");
   return (
     <Layout menus={menus}>
       <Head>
@@ -107,7 +108,9 @@ export default function IndexPage({
 export async function getStaticProps(
   context: GetStaticPropsContext
 ): Promise<GetStaticPropsResult<IndexPageProps>> {
+  console.log("getStaticProps");
   try {
+    console.log("Fetching main menu...");
     const { tree: menus } = await drupal.getMenu("primary-menu", {
       locale: context.locale,
       defaultLocale: context.defaultLocale,
@@ -122,6 +125,7 @@ export async function getStaticProps(
       },
     };
   } catch (error) {
+    console.error("Error fetching menus:", error);
     return {
       props: {
         menus: {

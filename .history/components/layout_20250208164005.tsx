@@ -13,7 +13,7 @@ export interface LayoutProps {
 export function Layout({ menus, children }: LayoutProps) {
   return (
     <>
-      <Header items={menus.main} />
+      <Header items={menus} />
       <main className="overflow-hidden">{children}</main>
       <Footer links={menus.footer} />
     </>

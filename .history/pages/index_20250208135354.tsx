@@ -1,22 +1,20 @@
 import Head from "next/head";
+import { GetStaticPropsResult } from "next";
 import { DrupalNode } from "next-drupal";
 
-import { Layout, LayoutProps } from "components/layout";
+import { drupal } from "lib/drupal";
+import { Layout } from "components/layout";
 import HeroSection from "components/HeroSection";
 import Image from "next/image";
-import { GetStaticPropsContext, GetStaticPropsResult } from "next";
-import { drupal } from "lib/drupal";
+import Header from "components/header";
 
-interface IndexPageProps extends LayoutProps {
-  // node: DrupalNode;
+interface IndexPageProps {
+  nodes: DrupalNode[];
 }
 
-export default function IndexPage({
-  // node,
-  menus,
-}: IndexPageProps) {
+export default function IndexPage({ nodes }: IndexPageProps) {
   return (
-    <Layout menus={menus}>
+    <Layout>
       <Head>
         <title>Next.js for Drupal</title>
         <meta
@@ -104,31 +102,13 @@ export default function IndexPage({
   );
 }
 
-export async function getStaticProps(
-  context: GetStaticPropsContext
+export async function getServerSideProps(
+  context
 ): Promise<GetStaticPropsResult<IndexPageProps>> {
-  try {
-    const { tree: menus } = await drupal.getMenu("primary-menu", {
-      locale: context.locale,
-      defaultLocale: context.defaultLocale,
-    });
-
-    return {
-      props: {
-        menus: {
-          main: menus,
-          footer: [],
-        },
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        menus: {
-          main: [],
-          footer: [],
-        },
-      },
-    };
-  }
+  const menus = await drupal.getMenu("main");
+  return {
+    props: {
+      menus,
+    },
+  };
 }

@@ -11,12 +11,9 @@ interface IndexPageProps extends LayoutProps {
   // node: DrupalNode;
 }
 
-export default function IndexPage({
-  // node,
-  menus,
-}: IndexPageProps) {
+export default function IndexPage({ node, menus }: IndexPageProps) {
   return (
-    <Layout menus={menus}>
+    <Layout menus={}>
       <Head>
         <title>Next.js for Drupal</title>
         <meta
@@ -107,28 +104,23 @@ export default function IndexPage({
 export async function getStaticProps(
   context: GetStaticPropsContext
 ): Promise<GetStaticPropsResult<IndexPageProps>> {
-  try {
-    const { tree: menus } = await drupal.getMenu("primary-menu", {
-      locale: context.locale,
-      defaultLocale: context.defaultLocale,
-    });
+  const { tree: main } = await drupal.getMenu("main", {
+    locale: context.locale,
+    defaultLocale: context.defaultLocale,
+  });
 
-    return {
-      props: {
-        menus: {
-          main: menus,
-          footer: [],
-        },
+  const { tree: footer } = await drupal.getMenu("footer", {
+    locale: context.locale,
+    defaultLocale: context.defaultLocale,
+  });
+
+  return {
+    props: {
+      // node : [],
+      menus: {
+        main,
+        footer,
       },
-    };
-  } catch (error) {
-    return {
-      props: {
-        menus: {
-          main: [],
-          footer: [],
-        },
-      },
-    };
-  }
+    },
+  };
 }

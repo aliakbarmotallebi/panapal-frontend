@@ -107,21 +107,28 @@ export default function IndexPage({
 export async function getStaticProps(
   context: GetStaticPropsContext
 ): Promise<GetStaticPropsResult<IndexPageProps>> {
+  console.log("getStaticProps");
   try {
-    const { tree: menus } = await drupal.getMenu("primary-menu", {
+    console.log("Fetching main menu...");
+    const { tree: menus } = await drupal.getMenu("menu", {
       locale: context.locale,
       defaultLocale: context.defaultLocale,
     });
 
+    const primaryMenu = menus.find((menu) => menu.id === "primary-menu");
+
+    console.log("Main Menu:", primaryMenu);
+
     return {
       props: {
         menus: {
-          main: menus,
+          main: null,
           footer: [],
         },
       },
     };
   } catch (error) {
+    console.error("Error fetching menus:", error);
     return {
       props: {
         menus: {
